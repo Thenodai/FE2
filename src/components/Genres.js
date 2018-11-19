@@ -1,51 +1,38 @@
 import React from 'react';
-import axios from 'axios';
-import { endpoints } from '../../config';
+import { connect } from 'react-redux';
+import { setGenresList } from '../actions';
+import { getGenres } from '../thunks';
 
-export default class Genres extends React.Component {
-  constructor() {
-    super();
+class Genres extends React.Component {
+    componentDidMount() {
+        const { onGetGenres } = this.props;
+        onGetGenres();
+    }
 
-    this.state = {
-      genres: [],
-    };
-
-    this.requestGenres();
-  }
-
-  requestGenres = () => {
-    axios
-      .get(endpoints.genres())
-      .then((res) => this.setGenreList(res.data.genres))
-      .catch((error) => console.log(error));
-  };
-
-  requestGenresMovies = (id) => {
-    const { onChangeList } = this.props;
-
-    axios
-      .get(endpoints.genreMovies(id))
-      .then((res) => onChangeList(res.data.results))
-      .catch((error) => console.log(error));
-  };
-
-  setGenreList = (genres) => {
-    this.setState({
-      genres,
-    })
-  };
-
-  render() {
-    const { genres } = this.state;
-
-    return (
-      <div className="genres">
-        {genres.map((genre) => (
-          <div key={genre.id} className="genre" onClick={() => this.requestGenresMovies(genre.id)}>
-            {genre.name}
-          </div>
-        ))}
-      </div>
-    );
-  }
+    render() {
+        const { genres, onChangeList } = this.props;
+        return (
+            <div className="genres">
+                {genres.map((genre) => (
+                    <div key={genre.id} className="genre" onClick={() => onChangeList(genre)}>
+                        {genre.name}
+                    </div>
+                ))}
+            </div>
+        );
+    }
 }
+
+export default connect(
+    (state) => {
+        return {
+            genres: state.movies.genres,
+        };
+    },
+    (dispatch) => {
+        return {
+            onGetGenres: () => dispatch(getGenres()),
+            onSetGenreList: (genres) => dispatch(setGenresList(genres)),
+        };
+    },
+)(Genres);

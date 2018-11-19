@@ -9,13 +9,13 @@ import './assets/style.scss';
 import App from './components/App';
 
 const store = createStore(
-  rootReducer,
-  applyMiddleware(logger, Thunk),
+    rootReducer,
+    applyMiddleware(logger, Thunk),
 );
 
 render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.querySelector('#app'),
+    <Provider store={store}>
+        <App />
+    </Provider>,
+    document.querySelector('#app'),
 );
